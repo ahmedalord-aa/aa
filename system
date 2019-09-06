@@ -1,0 +1,29 @@
+#!/bin/bash                                                                                                                                                            
+z=$1                                                                                                                                                                   
+count1=$(wc -l ${1} | cut -d ' ' -f1 )                                                                                                                                 
+echo $count1                                                                                                                                                           
+i=1                                                                                                                                                                    
+fif=$2
+p=5060
+while [ $i -le $count1 ]                                                                                                                                               
+do                                                                                                                                                                     
+k=$(($i + $fif))                                                                                                                                                       
+                                                                                                                                                                       
+while [ $i -le $k ]                                                                                                                                                    
+do                                                                                                                                                                     
+if [ $i -gt $count1 ]; then                                                                                                                                            
+break                                                                                                                                                                  
+fi                                                                                                                                                                     
+sed -n ''${i}'p' $1 >> tmpfile.txt                                                                                                                                     
+i=`expr $i + 1`                                                                                                                                                        
+done                                                                                                                                                                   
+filecontent=( `cat tmpfile.txt `)                                                                                                                                      
+for s in "${filecontent[@]}"                                                                                                                                           
+do                                                                                                                                                                     
+nohup python svmap.py -A $s | grep Xman-Found | tee -a sip.txt 2> svmap.error &
+p=`expr $p + 1`                                                                                                                                                        
+done                                                                                                                                                                   
+echo "Total Scan Is ".$i;
+rm tmpfile.txt                                                                                                                                                         
+sleep 30
+done                                                                                                                                                                   
